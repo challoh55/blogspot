@@ -1,0 +1,32 @@
+{% extends 'blogapp/base.html' %}
+{% block content %}
+
+<div class="container my-5">
+    <div class="card bg-body-secondary my-3 pt-2">
+        <div class="card-body ">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div>
+                    <h3 class="text-center">Update your profile</h3>
+                </div>
+                <div class="my-3">
+                    <input type="email" name="email" id="name" placeholder="Enter your email" class="form-control"
+                        value="{{users.email}}">
+                </div>
+                <div class="my-3">
+                    <input type="text" name="username" id="name" placeholder="Enter your username" class="form-control"
+                        value="{{users.username}}">
+                </div>
+                <div class="my-3">
+                    <input type="file" name="image" id="image" placeholder="Upload your profile picture" value="{{users.image.url}}">
+                </div>
+
+                <div class="container text-center my-3">
+                    <button class="btn btn-primary " type="submit">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

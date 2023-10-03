@@ -1,0 +1,135 @@
+{% extends 'blogapp/base.html' %}
+{% block content %}
+
+<!--trending and  most blooged topics -->
+<div class="container my-5 ">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success my-3 text-center" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- all posts -->
+    <div class="container my-5 ">
+        <div class="card px-4">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card my-3 px-3">
+                        <h1 class="mt-3 text-center">All Posts</h1>
+                        {% for post in page %}
+                        <div class="card bg-body-secondary pb-2 mb-4">
+                            <div class="card-header text-center px-0">
+                                <h6><a href="{% url 'all_posts_for_topic' %}?title={{post.title}}">{{post.title}}</a>
+                                </h6>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <img src="{{ post.image.url }}" class="card-img-top m-2">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="m-2">
+                                        <div class="card-text text-center">{{post.content|slice:":200"}}.... <a
+                                                href="{% url 'view_post_details' %}?id={{post.id}}">read more</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-center">
+                                <small>{{post.created_at | timesince }}ago</small>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card p-4 my-3">
+                        <h1 class="mb-4 text-center">Most Blogged Topics</h1>
+                        {% for e in post_counts|slice:':10' %}
+                        <div class="card-text text-center my-3 text">
+                            <h2><a class="text-decoration-none" href="{% url 'all_posts_for_topic' %}?title={{e.title}}">{{e.title}}</a></h2>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="card p-4 my-3 text-center">
+                        <h1 class="mb-4 text-center">All Bloggers</h1>
+                        {% for blogger in bloggers %}
+                        <div class="my-2"><a href="{% url 'posts_by_user' %}?id={{blogger.id}}">{{blogger.username}}</a>
+                        </div>
+                        
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <nav aria-label="page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item ">
+                            {% if page.has_previous %}
+                            <a class="page-link"
+                                href="{% url 'user_homepage' %}?page={{ page.previous_page_number }}">Previous</a>
+                            {% endif %}
+                        </li>
+                        <li class="page-item active" aria-current="page">
+                            <a class="page-link" href="#">{{ page.number }}</a>
+                        </li>
+                        <li class="page-item">
+                            {% if page.has_next %}
+                            <a class="page-link"
+                                href="{% url 'user_homepage' %}?page={{ page.next_page_number }}">Next</a>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card p-4">
+        <!-- most comments -->
+        <h1 class="mb-4 text-center">Trending blogs</h1>
+        <div class="row">
+            {% for e in most_comments|slice:':9' %}
+            <div class="col-md-4 mt-3">
+                <div class="card bg-body-secondary pb-2">
+                    <div class="card-header text-center px-0">
+                        <h6><a href="{% url 'view_post_details' %}?id={{e.id}}">{{e.title}}</a></h6>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{ e.image.url }}" class="card-img-top m-2">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="m-2">
+                                <div class="card-text text-center">{{e.content | slice:':200'}}.... <a
+                                        href="{% url 'view_post_details' %}?id={{e.id}}">read more</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col-6">
+                                <small>{{e.created_at|timesince}} ago</small>
+                            </div>
+                            <div class="col-6">
+                                <p>{{e.post_count}} comments</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+
+
+
+{% endblock %}

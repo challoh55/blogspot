@@ -1,0 +1,155 @@
+{% extends 'blogapp/base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="mt-3 text-center">
+        <h1>All Blogs for {{title}}</h1>
+
+    </div>
+</div>
+
+{% for post in all_posts %}
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card my-5">
+                <div class="card-body p-0">
+                    <div class="card-header m-0 text-center">
+
+
+                        <h2 class="ml-3 mb-0 text-center">Author: {{post.user}}</h2>
+                    </div>
+                    <div class="card-text px-3">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card-image">
+                                    <img src="{{ post.image.url }}" class="card-img-top">
+
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <h3 class="card-title">{{post.title}}</h3>
+                                <h5 class="card-title">{{post.content}}</h5>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4 ">
+                                    <div class="">
+                                        <a class="collapsed-trigger ms-5 text-decoration-none" data-bs-toggle="collapse"
+                                            href="#collapseExample1{{ post.id }}" role="button" aria-expanded="false"
+                                            aria-controls="collapseExample{{ post.id }}">
+                                            <h4><i class="bi bi-heart"> </i> <small>{{post.likes.count}} likes</small></h4>
+                                        </a>
+                                    </div>
+                                    <div class="collapse" id="collapseExample1{{ post.id }}">
+                                        <div class="card card-body p-0" style="height: 250px; overflow: scroll;">
+                                           <div class="card-header text-center">
+                                            <p>Liked by</p>
+
+                                           </div>
+                                            <div class="p-4 ">
+                                                {% for user in post.likes.all %}
+                                                <footer class="blockquote-footer">
+                                                    {% if user == request.user %}
+                                                    you
+                                                    {% else %}
+                                                    {{user.username}}
+                                                    {% endif %}
+                                                </footer>
+                                                <hr>
+                                                {% endfor %}
+                                            </div>
+                                            <div class="card-footer px-0 mb-0 " style="margin-top: auto;">
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="like">
+                                                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                                                    <button class="btn btn-primary btn-sm text-center " type="submit">Like</button>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="mb-4 ">
+                                    <div class="">
+                                        <a class="collapsed-trigger ms-5 text-decoration-none" data-bs-toggle="collapse"
+                                            href="#collapseExample{{ post.id }}" role="button" aria-expanded="false"
+                                            aria-controls="collapseExample{{ post.id }}">
+                                            <h4><i class="bi bi-chat"> </i> <small>{{post.comment_count}}
+                                                    comments</small></h4>
+                                        </a>
+                                    </div>
+                                    <div class="collapse" id="collapseExample{{ post.id }}">
+                                        <div class="card card-body p-0" style="height: 250px; overflow: scroll;">
+
+                                            <div class="p-4 ">
+                                                {% for comment in post.comment_set.all %}
+                                                <h6>{{comment.content}}
+                                                </h6>
+                                                <footer class="blockquote-footer">
+                                                    {% if comment.user == request.user %}
+                                                    you
+                                                    {% else %}
+                                                    {{comment.user}}
+                                                    {% endif %}
+                                                </footer>
+                                                <hr>
+                                                {% endfor %}
+                                            </div>
+                                            <div class="card-footer px-0 mb-0 " style="margin-top: auto;">
+                                                <form method="post">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="action" value="comment">
+                                                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                                                    <div class="input-group ">
+                                                        <input type="text" class="form-control" name="comment"
+                                                            placeholder="Type your Comment..." required>
+                                                        <button class="btn btn-primary" type="submit">comment</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-3">
+            <div class="card my-5">
+                <div class="card-header">
+                    <h3 class="text-center">About the author</h3>
+                </div>
+                <div class="my-3 text-center p-2">
+                    <img src="{{ post.user.image.url }}" class="card-img mb-3" alt="Profile Image">
+                    <h5>Full Name: {{post.user.first_name}} {{post.user.last_name}}</h5>
+                    <h5>Phonenumber: {{post.user.phonenumber}}</h5>
+                    <h5>Age: {{post.user.phonenumber}}</h5>
+                    <h5>Other Blogs by the author:
+                        {% for post1 in related_post %}
+                        <a href="{% url 'view_post_details' %}?id={{post.id}}">{{post1.title}}</a>
+                        {% endfor %}
+                    </h5>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endfor %}
+
+{% endblock %}
